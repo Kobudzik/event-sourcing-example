@@ -30,7 +30,7 @@ namespace EventSourcingExample.Infrastructure.Persistence
             {
                 administrator.EmailConfirmed = true;
                 administrator.IsActive = true;
-                await userManager.CreateAsync(administrator, "ARKAS@)@#");
+                await userManager.CreateAsync(administrator, "admin");
                 await userManager.AddToRolesAsync(administrator, new[] { administratorRole.Name });
             }
 

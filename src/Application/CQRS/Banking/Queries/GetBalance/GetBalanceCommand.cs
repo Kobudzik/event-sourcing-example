@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using CommandsRegistry.Application.Abstraction;
-using CommandsRegistry.Domain.Entities.Banking;
+using EventSourcingExample.Application.Abstraction;
+using EventSourcingExample.Domain.Entities.Banking;
 using EventSourcingExample.Application.CQRS.Authentication.DTOs;
 using MediatR;
 using System;

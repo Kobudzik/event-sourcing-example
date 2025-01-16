@@ -1,10 +1,10 @@
-﻿using CommandsRegistry.Application.Abstraction;
+﻿using EventSourcingExample.Application.Abstraction;
 using EventSourcingExample.Domain.Common;
 using EventSourcingExample.Infrastructure.Persistence;
 using System;
 using System.Threading.Tasks;
 
-namespace CommandsRegistry.Infrastructure.Persistence
+namespace EventSourcingExample.Infrastructure.Persistence
 {
     public class SqlRepository<T> : IRepository<T> where T : class, IEventSourceEntity, new()
     {

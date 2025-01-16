@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace CommandsRegistry.Application.Abstraction
+namespace EventSourcingExample.Application.Abstraction
 {
     public interface IRepository<T> where T : IEventSourceEntity, new()
     {

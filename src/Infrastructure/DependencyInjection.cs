@@ -1,6 +1,6 @@
-﻿using CommandsRegistry.Application.Abstraction;
-using CommandsRegistry.Domain.Entities.Banking;
-using CommandsRegistry.Infrastructure.Persistence;
+﻿using EventSourcingExample.Application.Abstraction;
+using EventSourcingExample.Domain.Entities.Banking;
+using EventSourcingExample.Infrastructure.Persistence;
 using EventSourcingExample.Application.Abstraction;
 using EventSourcingExample.Application.Abstraction.Configurations;
 using EventSourcingExample.Infrastructure.Common;
@@ -27,7 +27,7 @@ namespace EventSourcingExample.Infrastructure
             if (configuration.GetValue<bool>("UseInMemoryDatabase"))
             {
                 services.AddDbContext<ApplicationDbContext>(options =>
-                    options.UseInMemoryDatabase("CommandsRegistry"));
+                    options.UseInMemoryDatabase("EventSourcingExample"));
             }
             else
             {

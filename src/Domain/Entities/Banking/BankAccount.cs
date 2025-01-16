@@ -1,10 +1,10 @@
-﻿using CommandsRegistry.Domain.Events.Banking;
+﻿using EventSourcingExample.Domain.Events.Banking;
 using EventSourcingExample.Domain.Common;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-namespace CommandsRegistry.Domain.Entities.Banking;
+namespace EventSourcingExample.Domain.Entities.Banking;
 
 public class BankAccount : IEventSourceEntity
 {

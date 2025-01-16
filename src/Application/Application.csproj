@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <RootNamespace>CommandsRegistry.Application</RootNamespace>
-    <AssemblyName>CommandsRegistry.Application</AssemblyName>
+    <RootNamespace>EventSourcingExample.Application</RootNamespace>
+    <AssemblyName>EventSourcingExample.Application</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

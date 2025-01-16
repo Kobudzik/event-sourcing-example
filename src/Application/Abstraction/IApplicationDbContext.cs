@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using CommandsRegistry.Domain.Entities.Banking;
+using EventSourcingExample.Domain.Entities.Banking;
 using EventSourcingExample.Domain.Entities.Core;
 using Microsoft.EntityFrameworkCore;
 

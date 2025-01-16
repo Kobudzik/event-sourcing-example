@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CommandsRegistry.Domain.Events.Banking
+namespace EventSourcingExample.Domain.Events.Banking
 {
     public class AccountWithdrawn
     {

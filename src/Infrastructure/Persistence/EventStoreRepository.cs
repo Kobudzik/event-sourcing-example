@@ -1,4 +1,4 @@
-﻿using CommandsRegistry.Application.Abstraction;
+﻿using EventSourcingExample.Application.Abstraction;
 using EventSourcingExample.Domain.Common;
 using EventStore.ClientAPI;
 using Newtonsoft.Json;

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CommandsRegistry.Domain.Entities.Banking;
+using EventSourcingExample.Domain.Entities.Banking;
 using EventSourcingExample.Application.Common.Mappings;
 using System;
 

@@ -12,7 +12,7 @@ using EventSourcingExample.Domain.Entities.Core;
 using Duende.IdentityServer.EntityFramework.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
-using CommandsRegistry.Domain.Entities.Banking;
+using EventSourcingExample.Domain.Entities.Banking;
 
 namespace EventSourcingExample.Infrastructure.Persistence
 {

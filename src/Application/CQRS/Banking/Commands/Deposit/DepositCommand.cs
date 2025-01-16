@@ -1,12 +1,12 @@
-﻿using CommandsRegistry.Application.Abstraction;
-using CommandsRegistry.Domain.Entities.Banking;
+﻿using EventSourcingExample.Application.Abstraction;
+using EventSourcingExample.Domain.Entities.Banking;
 using EventSourcingExample.Application.Common.Exceptions;
 using MediatR;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CommandsRegistry.Application.CQRS.Banking.Commands.Deposit
+namespace EventSourcingExample.Application.CQRS.Banking.Commands.Deposit
 {
     public sealed class DepositCommand : IRequest
     {

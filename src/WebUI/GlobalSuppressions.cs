@@ -5,4 +5,4 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Design", "RCS1090:Add call to 'ConfigureAwait' (or vice versa).", Justification = "<Pending>", Scope = "NamespaceAndDescendants", Target = "CommandsRegistry.WebUI")]
+[assembly: SuppressMessage("Design", "RCS1090:Add call to 'ConfigureAwait' (or vice versa).", Justification = "<Pending>", Scope = "NamespaceAndDescendants", Target = "EventSourcingExample.WebUI")]
