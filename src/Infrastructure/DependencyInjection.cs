@@ -1,4 +1,7 @@
-﻿using EventSourcingExample.Application.Abstraction;
+﻿using CommandsRegistry.Application.Abstraction;
+using CommandsRegistry.Domain.Entities.Banking;
+using CommandsRegistry.Infrastructure.Persistence;
+using EventSourcingExample.Application.Abstraction;
 using EventSourcingExample.Application.Abstraction.Configurations;
 using EventSourcingExample.Infrastructure.Common;
 using EventSourcingExample.Infrastructure.Configuration;
@@ -6,9 +9,11 @@ using EventSourcingExample.Infrastructure.Identity;
 using EventSourcingExample.Infrastructure.Identity.Jwt;
 using EventSourcingExample.Infrastructure.Identity.Users;
 using EventSourcingExample.Infrastructure.Persistence;
+using EventStore.ClientAPI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace EventSourcingExample.Infrastructure
 {
@@ -53,6 +58,26 @@ namespace EventSourcingExample.Infrastructure
 
             services.AddSingleton<IApplicationConfiguration, ApplicationConfiguration>();
 
+
+            if (configuration.GetValue<bool>("UseBankingEventStore"))
+            {
+                services.AddScoped<IRepository<BankAccount>, EventStoreRepository<BankAccount>>();
+
+                services.AddSingleton(sp =>
+                {
+                    var connectionSettings = ConnectionSettings
+                        .Create()
+                        .DisableServerCertificateValidation()
+                        .Build();
+
+                    var eventStoreDbConnection = EventStoreConnection.Create(connectionSettings, new Uri("tcp://admin:changeit@localhost:1113"));
+                    return eventStoreDbConnection;
+                });
+            }
+            else
+            {
+                services.AddScoped<IRepository<BankAccount>, SqlRepository<BankAccount>>();
+            }
             return services;
         }
     }

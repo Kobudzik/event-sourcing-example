@@ -12,6 +12,7 @@ using EventSourcingExample.Domain.Entities.Core;
 using Duende.IdentityServer.EntityFramework.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
+using CommandsRegistry.Domain.Entities.Banking;
 
 namespace EventSourcingExample.Infrastructure.Persistence
 {
@@ -36,6 +37,7 @@ namespace EventSourcingExample.Infrastructure.Persistence
 
         public DbSet<UserAccount> UserAccounts { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<BankAccount> BankAccounts { get; set; }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
         {

@@ -25,6 +25,9 @@
     </ItemGroup>
   </Target>
   <ItemGroup>
+    <Content Remove="appsettings.json" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="HealthChecks.cs.bak" />
   </ItemGroup>
   <ItemGroup>
@@ -60,6 +63,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Middlewares\Extensions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="appsettings.json" />
   </ItemGroup>
   <ItemGroup>
     <Content Update="appsettings.json">
