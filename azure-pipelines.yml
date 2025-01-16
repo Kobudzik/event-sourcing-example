@@ -1,0 +1,56 @@
+  # ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+- develop
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+steps:
+- task: CmdLine@2
+  inputs:
+   script: ren src\WebUI\appsettings.json.example appsettings.json
+  displayName: 'rename appsettings'
+
+- task: FileTransform@1
+  inputs:
+    folderPath: 'src\WebUI'
+    fileType: 'json'
+    targetFiles: 'appsettings.json'
+  displayName: 'Transform configs- inject pipeline variables'
+
+- task: NuGetToolInstaller@1
+  name: 
+  displayName: 'get nuget'
+  
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '$(solution)'
+  displayName: 'nuget restore solution'
+
+
+- task: VSBuild@1
+  inputs:
+    solution: '$(solution)'
+    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+  displayName: 'build'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'BackendPipelineOutput'
+
+# - task: VSTest@2
+#   inputs:
+#     platform: '$(buildPlatform)'
+#     configuration: '$(buildConfiguration)'

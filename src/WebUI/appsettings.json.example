@@ -1,0 +1,74 @@
+{
+	"UseInMemoryDatabase": false,
+	"ConnectionStrings": {
+		"DefaultConnection": "Server=.;Database=ArkasAppDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;",
+	},
+	"Application": {
+		"BackendUrl": "http://localhost:33333",
+		"FrontendUrl": "http://127.0.0.1:8080",
+		"SubiektUrl": "https://localhost:7235",
+		"ArkasUrl": "https://arkas-bhp.com",
+		"SubiektHeaderPassword": "test"
+	},
+	"Logging": {
+		"LogLevel": {
+			"Default": "Warning",
+			"Hangfire": "Information"
+		}
+	},
+	"AllowedHosts": "*",
+	"TokenConfiguration": {
+		"Secret": "SecretTokenSecretForMyAppWhichIs256bit",
+		"Issuer": "localhost:5001",
+		"Audience": "DeveloperAudience",
+		"AccessExpirationInMinutes": 1440,
+		"RefreshExpirationInMinutes": 120,
+		"LinksExpirationInMinutes": 15
+	},
+	"Users":{
+		"PasswordExpirationFrequency": 30
+	},
+	"Mail": {
+		"ServerAddress": "smtp.mailtrap.io",
+		"ServerPort": 2525,
+		"MailFrom": "no-reply@app.com",
+		"ServerLogin": "XXXXXXXXXXXXXX",
+		"ServerPassword": "XXXXXXXXXXXXXX",
+		"TemplatesPath": "MailTemplates/"
+	},
+	"OverdueReductions":{
+		"Values": [
+			{
+				"from": null,
+				"to": 0,
+				"change": 6,
+				"type": "ConstantPercent",
+				"valueChangeSymbol": "+"
+			},
+			{
+				"from": 15,
+				"to": 36,
+				"change": 1,
+				"type": "PercentPerDay",
+				"valueChangeSymbol": "-"
+			},
+			{
+				"from": 37,
+				"to": 65,
+				"change": 2,
+				"type": "PercentPerDay",
+				"valueChangeSymbol": "-"
+			},		
+			{
+				"from": 66,
+				"to": null,
+				"change": 80,
+				"type": "ConstantPercent",
+				"valueChangeSymbol": "-"
+			}
+		]
+	},
+	"Payouts": {
+		"TaxPercent": 24
+	}
+}
