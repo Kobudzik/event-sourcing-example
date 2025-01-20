@@ -9,31 +9,20 @@ using System.Threading.Tasks;
 
 namespace EventSourcingExample.Application.CQRS.Users.Commands.ChangeUserPassword
 {
-    public sealed class GetBalanceQuery : IRequest<BankAccountDto>
+    public sealed class GetBalanceQuery(Guid identifier) : IRequest<BankAccountDto>
     {
-        public GetBalanceQuery(Guid identifier)
+		public Guid Identifier { get; } = identifier;
+
+		internal sealed class GetBalanceCommandHandler(IRepository<BankAccount> bankRepository, IMapper mapper) : IRequestHandler<GetBalanceQuery, BankAccountDto>
         {
-            Identifier = identifier;
-        }
+            private readonly IRepository<BankAccount> _bankRepository = bankRepository;
+            private readonly IMapper _mapper = mapper;
 
-        public Guid Identifier { get; }
-
-        internal sealed class GetBalanceCommandHandler : IRequestHandler<GetBalanceQuery, BankAccountDto>
-        {
-            private readonly IRepository<BankAccount> _bankRepository;
-            private readonly IMapper _mapper;
-
-            public GetBalanceCommandHandler(IRepository<BankAccount> bankRepository, IMapper mapper)
-            {
-                _bankRepository = bankRepository;
-                _mapper = mapper;
-            }
-
-            public async Task<BankAccountDto> Handle(GetBalanceQuery request, CancellationToken cancellationToken)
+			public async Task<BankAccountDto> Handle(GetBalanceQuery request, CancellationToken cancellationToken)
             {
                 var entity = await _bankRepository.GetByIdAsync(request.Identifier);
 
-                entity.GetBalance();
+                entity.GetBalance(); // hack: force ex here if account closed
 
                 return _mapper.Map<BankAccountDto>(entity);
             }

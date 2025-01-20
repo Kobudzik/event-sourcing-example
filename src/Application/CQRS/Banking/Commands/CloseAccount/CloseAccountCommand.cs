@@ -8,25 +8,15 @@ using System.Threading.Tasks;
 
 namespace EventSourcingExample.Application.CQRS.Banking.Commands.Withdraw
 {
-    public sealed class CloseAccountCommand : IRequest
+    public sealed class CloseAccountCommand(Guid identifier) : IRequest
     {
-        public CloseAccountCommand(Guid identifier)
+		public Guid Identifier { get; set; } = identifier;
+
+		internal sealed class CloseAccountCommandHandler(IRepository<BankAccount> bankRepository) : IRequestHandler<CloseAccountCommand>
         {
-            Identifier = identifier;
-        }
+            private readonly IRepository<BankAccount> _bankRepository = bankRepository;
 
-        public Guid Identifier { get; set; }
-
-        internal sealed class CloseAccountCommandHandler : IRequestHandler<CloseAccountCommand>
-        {
-            private readonly IRepository<BankAccount> _bankRepository;
-
-            public CloseAccountCommandHandler(IRepository<BankAccount> bankRepository)
-            {
-                _bankRepository = bankRepository;
-            }
-
-            public async Task<Unit> Handle(CloseAccountCommand request, CancellationToken cancellationToken)
+			public async Task<Unit> Handle(CloseAccountCommand request, CancellationToken cancellationToken)
             {
                 var account = await _bankRepository.GetByIdAsync(request.Identifier);
                 if(account == null)

@@ -13,16 +13,11 @@ namespace EventSourcingExample.Application.CQRS.Banking.Commands.Withdraw
         {
         }
 
-        internal sealed class OpenAccountCommandHandler : IRequestHandler<OpenAccountCommand, Guid>
+        internal sealed class OpenAccountCommandHandler(IRepository<BankAccount> bankRepository) : IRequestHandler<OpenAccountCommand, Guid>
         {
-            private readonly IRepository<BankAccount> _bankRepository;
+            private readonly IRepository<BankAccount> _bankRepository = bankRepository;
 
-            public OpenAccountCommandHandler(IRepository<BankAccount> bankRepository)
-            {
-                _bankRepository = bankRepository;
-            }
-
-            public async Task<Guid> Handle(OpenAccountCommand request, CancellationToken cancellationToken)
+			public async Task<Guid> Handle(OpenAccountCommand request, CancellationToken cancellationToken)
             {
                 var account = new BankAccount();
                 account.Open();

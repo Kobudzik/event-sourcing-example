@@ -7,16 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public class EventStoreRepository<T> : IRepository<T> where T : IEventSourceEntity, new()
+public class EventStoreRepository<T>(IEventStoreConnection eventStoreConnection) : IRepository<T> where T : IEventSourceEntity, new()
 {
-    private readonly IEventStoreConnection _eventStoreConnection;
+    private readonly IEventStoreConnection _eventStoreConnection = eventStoreConnection;
 
-    public EventStoreRepository(IEventStoreConnection eventStoreConnection)
-    {
-        _eventStoreConnection = eventStoreConnection;
-    }
-
-    public async Task<T> GetByIdAsync(Guid id)
+	public async Task<T> GetByIdAsync(Guid id)
     {
         var events = await _eventStoreConnection.ReadStreamEventsForwardAsync($"{nameof(T)}-{id}", 0, 200, false);
         var entity = new T();

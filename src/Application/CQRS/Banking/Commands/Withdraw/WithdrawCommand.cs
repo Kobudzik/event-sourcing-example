@@ -8,27 +8,16 @@ using System.Threading.Tasks;
 
 namespace EventSourcingExample.Application.CQRS.Banking.Commands.Withdraw
 {
-    public sealed class WithdrawCommand : IRequest
+    public sealed class WithdrawCommand(Guid identifier, decimal amount) : IRequest
     {
-        public WithdrawCommand(Guid identifier, decimal amount)
+		public Guid Identifier { get; } = identifier;
+		public decimal Amount { get; } = amount;
+
+		internal sealed class WithdrawCommandHandler(IRepository<BankAccount> bankRepository) : IRequestHandler<WithdrawCommand>
         {
-            Identifier = identifier;
-            Amount = amount;
-        }
+            private readonly IRepository<BankAccount> _bankRepository = bankRepository;
 
-        public Guid Identifier { get; }
-        public decimal Amount { get; }
-
-        internal sealed class WithdrawCommandHandler : IRequestHandler<WithdrawCommand>
-        {
-            private readonly IRepository<BankAccount> _bankRepository;
-
-            public WithdrawCommandHandler(IRepository<BankAccount> bankRepository)
-            {
-                _bankRepository = bankRepository;
-            }
-
-            public async Task<Unit> Handle(WithdrawCommand request, CancellationToken cancellationToken)
+			public async Task<Unit> Handle(WithdrawCommand request, CancellationToken cancellationToken)
             {
                 var entity = await _bankRepository.GetByIdAsync(request.Identifier);
                 if (entity == null)
