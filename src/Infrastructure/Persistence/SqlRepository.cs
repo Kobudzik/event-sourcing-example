@@ -22,7 +22,7 @@ namespace EventSourcingExample.Infrastructure.Persistence
 
         public async Task SaveAsync(T entity)
         {
-            var existingEntity = GetByIdAsync(entity.Id);
+            var existingEntity = await GetByIdAsync(entity.Id);
 
             if (existingEntity == null)
             {

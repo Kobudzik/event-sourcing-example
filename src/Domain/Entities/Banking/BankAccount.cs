@@ -9,12 +9,19 @@ namespace EventSourcingExample.Domain.Entities.Banking;
 public class BankAccount : IEventSourceEntity
 {
     public Guid Id { get; private set; } = Guid.NewGuid();
-    public decimal Balance { get; private set; } = 0;
+	private decimal Balance { get; set; } = 0;
     public bool IsOpened { get; private set; }
 
     private List<object> _eventSourceChanges = new List<object>();
 
-    public void Open()
+    public decimal GetBalance()
+	{
+        if(!IsOpened)
+			throw new InvalidOperationException("Account is closed");
+		return Balance;
+	}
+
+	public void Open()
     {
         IsOpened = true;
         AddEvent(new AccountOpened()); // For event sourcing
@@ -22,13 +29,17 @@ public class BankAccount : IEventSourceEntity
 
     public void Close()
     {
-        IsOpened = false;
+        if(!IsOpened)
+			IsOpened = false;
         AddEvent(new AccountClosed()); // For event sourcing
     }
 
     public void Deposit(decimal amount)
     {
-        if (amount <= 0)
+		if (!IsOpened)
+			throw new InvalidOperationException("Account is closed");
+
+		if (amount <= 0)
             throw new InvalidOperationException("Amount must be positive");
 
         Balance += amount;
@@ -37,7 +48,10 @@ public class BankAccount : IEventSourceEntity
 
     public void Withdraw(decimal amount)
     {
-        if (amount <= 0)
+        if(!IsOpened)
+			throw new InvalidOperationException("Account is closed");
+
+		if (amount <= 0)
             throw new InvalidOperationException("Amount must be positive");
 
         if (Balance < amount)

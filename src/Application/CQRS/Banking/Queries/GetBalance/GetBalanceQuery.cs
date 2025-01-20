@@ -9,16 +9,16 @@ using System.Threading.Tasks;
 
 namespace EventSourcingExample.Application.CQRS.Users.Commands.ChangeUserPassword
 {
-    public sealed class GetBalanceCommand : IRequest<BankAccountDto>
+    public sealed class GetBalanceQuery : IRequest<BankAccountDto>
     {
-        public GetBalanceCommand(Guid identifier)
+        public GetBalanceQuery(Guid identifier)
         {
             Identifier = identifier;
         }
 
         public Guid Identifier { get; }
 
-        internal sealed class GetBalanceCommandHandler : IRequestHandler<GetBalanceCommand, BankAccountDto>
+        internal sealed class GetBalanceCommandHandler : IRequestHandler<GetBalanceQuery, BankAccountDto>
         {
             private readonly IRepository<BankAccount> _bankRepository;
             private readonly IMapper _mapper;
@@ -29,9 +29,12 @@ namespace EventSourcingExample.Application.CQRS.Users.Commands.ChangeUserPasswor
                 _mapper = mapper;
             }
 
-            public async Task<BankAccountDto> Handle(GetBalanceCommand request, CancellationToken cancellationToken)
+            public async Task<BankAccountDto> Handle(GetBalanceQuery request, CancellationToken cancellationToken)
             {
-                var entity = _bankRepository.GetByIdAsync(request.Identifier);
+                var entity = await _bankRepository.GetByIdAsync(request.Identifier);
+
+                entity.GetBalance();
+
                 return _mapper.Map<BankAccountDto>(entity);
             }
         }

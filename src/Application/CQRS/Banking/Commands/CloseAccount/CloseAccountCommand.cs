@@ -1,4 +1,5 @@
 ﻿using EventSourcingExample.Application.Abstraction;
+using EventSourcingExample.Application.Common.Exceptions;
 using EventSourcingExample.Domain.Entities.Banking;
 using MediatR;
 using System;
@@ -28,7 +29,10 @@ namespace EventSourcingExample.Application.CQRS.Banking.Commands.Withdraw
             public async Task<Unit> Handle(CloseAccountCommand request, CancellationToken cancellationToken)
             {
                 var account = await _bankRepository.GetByIdAsync(request.Identifier);
-                account.Close();
+                if(account == null)
+                    throw new NotFoundException(nameof(BankAccount), request.Identifier);
+
+				account.Close();
                 await _bankRepository.SaveAsync(account);
                 return Unit.Value;
             }
