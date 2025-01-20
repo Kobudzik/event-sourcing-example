@@ -1,5 +1,6 @@
 {
 	"UseInMemoryDatabase": false,
+	"UseBankingEventStore": false,
 	"ConnectionStrings": {
 		"DefaultConnection": "Server=.;Database=EventSourcingExample;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;"
 	},
