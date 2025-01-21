@@ -1,19 +1,16 @@
 ﻿using EventSourcingExample.Application.Abstraction;
-using EventSourcingExample.Domain.Entities.Banking;
-using EventSourcingExample.Infrastructure.Persistence;
-using EventSourcingExample.Application.Abstraction;
 using EventSourcingExample.Application.Abstraction.Configurations;
+using EventSourcingExample.Domain.Entities.Banking;
 using EventSourcingExample.Infrastructure.Common;
 using EventSourcingExample.Infrastructure.Configuration;
 using EventSourcingExample.Infrastructure.Identity;
 using EventSourcingExample.Infrastructure.Identity.Jwt;
 using EventSourcingExample.Infrastructure.Identity.Users;
 using EventSourcingExample.Infrastructure.Persistence;
-using EventStore.ClientAPI;
+using EventStore.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace EventSourcingExample.Infrastructure
 {
@@ -34,12 +31,8 @@ namespace EventSourcingExample.Infrastructure
                 services.AddDbContext<ApplicationDbContext>(options =>
                     options.UseSqlServer(
                         configuration.GetConnectionString("DefaultConnection"),
-                        sqlOptions =>
-                        {
-                            sqlOptions.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName);
-                            //sqlOptions.MigrationsAssembly("Infrastructure.Persistence.CoreMigrations");
-                        }
-                    ),
+						sqlOptions => sqlOptions.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)
+					),
                     ServiceLifetime.Transient
               );
             }
@@ -63,17 +56,12 @@ namespace EventSourcingExample.Infrastructure
             {
                 services.AddScoped<IRepository<BankAccount>, EventStoreRepository<BankAccount>>();
 
-                services.AddSingleton(sp =>
-                {
-                    var connectionSettings = ConnectionSettings
-                        .Create()
-                        .DisableServerCertificateValidation()
-                        .Build();
-
-                    var eventStoreDbConnection = EventStoreConnection.Create(connectionSettings, new Uri("tcp://admin:changeit@localhost:1113"));
-                    return eventStoreDbConnection;
-                });
-            }
+				services.AddSingleton(_ =>
+				{
+					var settings = EventStoreClientSettings.Create("esdb://admin:changeit@localhost:2113?tls=false&tlsVerifyCert=false");
+					return new EventStoreClient(settings);
+				});
+			}
             else
             {
                 services.AddScoped<IRepository<BankAccount>, SqlRepository<BankAccount>>();

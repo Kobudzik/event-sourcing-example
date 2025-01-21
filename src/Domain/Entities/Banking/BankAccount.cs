@@ -8,7 +8,7 @@ namespace EventSourcingExample.Domain.Entities.Banking;
 
 public class BankAccount : IEventSourceEntity
 {
-    public Guid Id { get; private set; } = Guid.NewGuid();
+    public Guid Id { get; private set; }
 	private decimal Balance { get; set; } = 0;
     public bool IsOpened { get; private set; }
 
@@ -23,8 +23,12 @@ public class BankAccount : IEventSourceEntity
 
 	public void Open()
     {
-        IsOpened = true;
-        AddEvent(new AccountOpened()); // For event sourcing
+        if(IsOpened)
+			throw new InvalidOperationException("Account is already opened");
+
+        Id = Guid.NewGuid();
+		IsOpened = true;
+        AddEvent(new AccountOpened(Id)); // For event sourcing
     }
 
     public void Close()
@@ -61,18 +65,28 @@ public class BankAccount : IEventSourceEntity
         AddEvent(new AccountWithdrawn(Id, amount)); // For event sourcing
     }
 
-    // Method to apply an event (for event sourcing)
-    public void ApplyEvent(object eventItem)
+	// Method to apply an event (for event sourcing)
+	public void ApplyEvent(object eventItem)
     {
         switch (eventItem)
         {
             case AccountDeposited deposited:
                 Balance += deposited.Amount;
             break;
-                case AccountWithdrawn withdrawn:
-            Balance -= withdrawn.Amount;
+
+            case AccountWithdrawn withdrawn:
+                Balance -= withdrawn.Amount;
             break;
-        }
+
+			case AccountOpened opened:
+			    IsOpened = true;
+                Id = opened.AccountId;
+			break;
+
+			case AccountClosed:
+			    IsOpened = false;
+			break;
+		}
     }
 
     // Method to get all uncommitted changes (for event sourcing)
@@ -81,34 +95,21 @@ public class BankAccount : IEventSourceEntity
         return _eventSourceChanges;
     }
 
-    // Mark changes as committed (for event sourcing)
-    public void MarkChangesAsCommitted()
-    {
-        _eventSourceChanges.Clear();
-    }
-
     // Add an event to the list (for event sourcing)
     private void AddEvent(object eventItem)
     {
         _eventSourceChanges.Add(eventItem);
     }
 
-    // Standard persistence: update the balance directly
-    public void UpdateBalance(decimal newBalance)
-    {
-        Balance = newBalance;
-    }
-
     public object DeserializeEvent(string eventJson, string eventType)
     {
-        switch (eventType)
-        {
-            case nameof(AccountDeposited):
-                return JsonConvert.DeserializeObject<AccountDeposited>(eventJson);
-            case nameof(AccountWithdrawn):
-                return JsonConvert.DeserializeObject<AccountWithdrawn>(eventJson);
-            default:
-                throw new InvalidOperationException($"Unknown event type: {eventType}");
-        }
-    }
+		return eventType switch
+		{
+			nameof(AccountDeposited) => JsonConvert.DeserializeObject<AccountDeposited>(eventJson),
+			nameof(AccountWithdrawn) => JsonConvert.DeserializeObject<AccountWithdrawn>(eventJson),
+			nameof(AccountOpened) => JsonConvert.DeserializeObject<AccountOpened>(eventJson),
+			nameof(AccountClosed) => JsonConvert.DeserializeObject<AccountClosed>(eventJson),
+			_ => throw new InvalidOperationException($"Unknown event type for {nameof(BankAccount)}: {eventType}"),
+		};
+	}
 }

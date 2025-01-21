@@ -1,51 +1,57 @@
 ﻿using EventSourcingExample.Application.Abstraction;
 using EventSourcingExample.Domain.Common;
-using EventStore.ClientAPI;
+using EventStore.Client;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public class EventStoreRepository<T>(IEventStoreConnection eventStoreConnection) : IRepository<T> where T : IEventSourceEntity, new()
+namespace EventSourcingExample.Infrastructure.Persistence
 {
-    private readonly IEventStoreConnection _eventStoreConnection = eventStoreConnection;
+	public class EventStoreRepository<T>(EventStoreClient eventStoreConnection) : IRepository<T> where T : IEventSourceEntity, new()
+	{
+		public async Task<T?> GetByIdAsync(Guid id)
+		{
+			try
+			{
+				var events = eventStoreConnection.ReadStreamAsync(Direction.Forwards, $"{typeof(T).Name}-{id}", StreamPosition.Start);
+				var entity = new T();
 
-	public async Task<T> GetByIdAsync(Guid id)
-    {
-        var events = await _eventStoreConnection.ReadStreamEventsForwardAsync($"{nameof(T)}-{id}", 0, 200, false);
-        var entity = new T();
+				await foreach (var resolvedEvent in events)
+				{
+					var eventJson = Encoding.UTF8.GetString(resolvedEvent.Event.Data.ToArray());
+					var eventType = resolvedEvent.Event.EventType;
+					var @event = entity.DeserializeEvent(eventJson, eventType);
+					entity.ApplyEvent(@event);
+				}
 
-        foreach (var resolvedEvent in events.Events)
-        {
-            var eventJson = Encoding.UTF8.GetString(resolvedEvent.OriginalEvent.Data);
-            var eventType = resolvedEvent.OriginalEvent.EventType;
-            var @event = entity.DeserializeEvent(eventJson, eventType);
-            entity.ApplyEvent(@event);
-        }
+				return entity;
+			}
+			catch (StreamNotFoundException)
+			{
+				// Stream not found, return null or a default instance
+				return default;
+			}
+		}
 
-        return entity;
-    }
+		public async Task SaveAsync(T entity)
+		{
+			var events = entity.GetUncommittedChanges();
+			var eventDataList = events.Select(ParseToEventData).ToArray();
+			await eventStoreConnection.AppendToStreamAsync($"{typeof(T).Name}-{entity.Id}", StreamState.Any, eventDataList);
+		}
 
-    public async Task SaveAsync(T bankAccount)
-    {
-        var events = bankAccount.GetUncommittedChanges();
+		private static EventData ParseToEventData(object e)
+		{
+			var eventType = e.GetType().Name;
+			var eventJson = JsonConvert.SerializeObject(e);
 
-        var eventDataList = events.Select(ParseToEventData).ToArray();
-
-        await _eventStoreConnection.AppendToStreamAsync($"{nameof(T)}-{bankAccount.Id}", ExpectedVersion.Any, eventDataList);
-    }
-
-    private static EventData ParseToEventData(object e)
-    {
-        var eventType = e.GetType().Name;
-        var eventJson = JsonConvert.SerializeObject(e);
-
-        return new EventData(
-            Guid.NewGuid(),
-            eventType, true,
-            Encoding.UTF8.GetBytes(eventJson),
-            null
-        );
-    }
+			return new EventData(
+				Uuid.NewUuid(),
+				eventType,
+				Encoding.UTF8.GetBytes(eventJson)
+			);
+		}
+	}
 }

@@ -1,0 +1,10 @@
+docker run -it --name eventstoredb `
+  -p 2113:2113 `
+  -p 1113:1113 `
+  -e EVENTSTORE_CLUSTER_SIZE=1 `
+  -e EVENTSTORE_RUN_PROJECTIONS=All `
+  -e EVENTSTORE_START_STANDARD_PROJECTIONS=true `
+  -e EVENTSTORE_DISABLE_INTERNAL_TCP_TLS=True `
+  -e EVENTSTORE_INSECURE=True `
+  -e EVENTSTORE_EnableAtomPubOverHttp=True `
+  eventstore/eventstore:latest

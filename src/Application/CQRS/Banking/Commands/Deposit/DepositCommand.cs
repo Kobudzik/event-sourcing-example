@@ -8,27 +8,16 @@ using System.Threading.Tasks;
 
 namespace EventSourcingExample.Application.CQRS.Banking.Commands.Deposit
 {
-    public sealed class DepositCommand : IRequest
+    public sealed class DepositCommand(Guid identifier, decimal amount) : IRequest
     {
-        public DepositCommand(Guid identifier, decimal amount)
+		public Guid Identifier { get; } = identifier;
+		public decimal Amount { get; } = amount;
+
+		internal sealed class DepositCommandHandler(IRepository<BankAccount> bankRepository) : IRequestHandler<DepositCommand>
         {
-            Identifier = identifier;
-            Amount = amount;
-        }
+            private readonly IRepository<BankAccount> _bankRepository = bankRepository;
 
-        public Guid Identifier { get; }
-        public decimal Amount { get; }
-
-        internal sealed class DepositCommandHandler : IRequestHandler<DepositCommand>
-        {
-            private readonly IRepository<BankAccount> _bankRepository;
-
-            public DepositCommandHandler(IRepository<BankAccount> bankRepository)
-            {
-                _bankRepository = bankRepository;
-            }
-
-            public async Task<Unit> Handle(DepositCommand request, CancellationToken cancellationToken)
+			public async Task<Unit> Handle(DepositCommand request, CancellationToken cancellationToken)
             {
                 var entity = await _bankRepository.GetByIdAsync(request.Identifier);
                 if (entity == null)

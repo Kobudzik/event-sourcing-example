@@ -15,17 +15,15 @@ namespace EventSourcingExample.Application.CQRS.Banking.Commands.Withdraw
 
 		internal sealed class WithdrawCommandHandler(IRepository<BankAccount> bankRepository) : IRequestHandler<WithdrawCommand>
         {
-            private readonly IRepository<BankAccount> _bankRepository = bankRepository;
-
 			public async Task<Unit> Handle(WithdrawCommand request, CancellationToken cancellationToken)
             {
-                var entity = await _bankRepository.GetByIdAsync(request.Identifier);
+                var entity = await bankRepository.GetByIdAsync(request.Identifier);
                 if (entity == null)
                     throw new NotFoundException(nameof(BankAccount), request.Identifier);
 
                 entity.Withdraw(request.Amount);
 
-                await _bankRepository.SaveAsync(entity);
+                await bankRepository.SaveAsync(entity);
                 return Unit.Value;
             }
         }

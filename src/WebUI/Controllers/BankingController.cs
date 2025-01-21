@@ -1,7 +1,9 @@
 ﻿using EventSourcingExample.Application.CQRS.Authentication.DTOs;
+using EventSourcingExample.Application.CQRS.Banking.Commands.CloseAccount;
 using EventSourcingExample.Application.CQRS.Banking.Commands.Deposit;
+using EventSourcingExample.Application.CQRS.Banking.Commands.OpenAccount;
 using EventSourcingExample.Application.CQRS.Banking.Commands.Withdraw;
-using EventSourcingExample.Application.CQRS.Users.Commands.ChangeUserPassword;
+using EventSourcingExample.Application.CQRS.Banking.Queries.GetBalance;
 using EventSourcingExample.Application.CQRS.Users.Queries.GetUserSettings;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -11,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace EventSourcingExample.WebUI.Controllers
 {
+    //TODO use carter?
     [AllowAnonymous]
     public class BankingController : ApiControllerBase
     {
