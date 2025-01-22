@@ -9,24 +9,17 @@ namespace EventSourcingExample.Domain.Entities.Banking;
 public class BankAccount : IEventSourceEntity
 {
     public Guid Id { get; private set; }
-	private decimal Balance { get; set; } = 0;
-    public bool IsOpened { get; private set; }
+    public decimal Balance { get; private set; } = 0;
+	public bool IsOpened { get; private set; }
 
-    private List<object> _eventSourceChanges = new List<object>();
-
-    public decimal GetBalance()
-	{
-        if(!IsOpened)
-			throw new InvalidOperationException("Account is closed");
-		return Balance;
-	}
+	private readonly List<object> _eventSourceChanges = [];
 
 	public void Open()
     {
-        if(IsOpened)
+		if (IsOpened)
 			throw new InvalidOperationException("Account is already opened");
 
-        Id = Guid.NewGuid();
+		Id = Guid.NewGuid();
 		IsOpened = true;
         AddEvent(new AccountOpened(Id)); // For event sourcing
     }
@@ -34,7 +27,8 @@ public class BankAccount : IEventSourceEntity
     public void Close()
     {
         if(!IsOpened)
-			IsOpened = false;
+			throw new InvalidOperationException("Account is already closed");
+		IsOpened = false;
         AddEvent(new AccountClosed()); // For event sourcing
     }
 
@@ -101,7 +95,8 @@ public class BankAccount : IEventSourceEntity
         _eventSourceChanges.Add(eventItem);
     }
 
-    public object DeserializeEvent(string eventJson, string eventType)
+	// Method to deserialize an event (for event sourcing)
+	public object DeserializeEvent(string eventJson, string eventType)
     {
 		return eventType switch
 		{

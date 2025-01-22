@@ -30,7 +30,6 @@ namespace EventSourcingExample.Infrastructure.Persistence
 			}
 			catch (StreamNotFoundException)
 			{
-				// Stream not found, return null or a default instance
 				return default;
 			}
 		}

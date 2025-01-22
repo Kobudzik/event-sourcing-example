@@ -22,7 +22,8 @@ namespace EventSourcingExample.Application.CQRS.Banking.Queries.GetBalance
 				if (entity == null)
 					throw new NotFoundException(nameof(BankAccount), request.Identifier);
 
-				entity.GetBalance(); // hack: force ex here if account closed
+				if(!entity.IsOpened)
+					throw new DomainLogicException("Account is closed. Can't get balance.");
 
 				return mapper.Map<BankAccountDto>(entity);
 			}

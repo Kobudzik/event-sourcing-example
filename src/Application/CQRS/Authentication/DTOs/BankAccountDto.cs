@@ -12,7 +12,7 @@ namespace EventSourcingExample.Application.CQRS.Authentication.DTOs
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<BankAccount, BankAccountDto>().ForMember(x => x.Balance, y => y.MapFrom(z => z.GetBalance()));
+            profile.CreateMap<BankAccount, BankAccountDto>();
         }
     }
 }
