@@ -20,6 +20,7 @@ using FluentValidation;
 using System.Globalization;
 using EventSourcingExample.WebUI.Middlewares.Extensions;
 using NReco.Logging.File;
+using Carter;
 
 namespace EventSourcingExample.WebUI
 {
@@ -74,6 +75,8 @@ namespace EventSourcingExample.WebUI
             {
                 configuration.RootPath = "wwwroot";
             });
+
+            services.AddCarter();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -117,6 +120,7 @@ namespace EventSourcingExample.WebUI
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapCarter();
                 endpoints.MapControllers();
                 endpoints.MapFallbackToFile("/index.html");
             });

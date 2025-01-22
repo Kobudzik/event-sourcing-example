@@ -1,68 +1,76 @@
-﻿using EventSourcingExample.Application.CQRS.Authentication.DTOs;
+﻿using Carter;
+using EventSourcingExample.Application.CQRS.Authentication.DTOs;
 using EventSourcingExample.Application.CQRS.Banking.Commands.CloseAccount;
 using EventSourcingExample.Application.CQRS.Banking.Commands.Deposit;
 using EventSourcingExample.Application.CQRS.Banking.Commands.OpenAccount;
 using EventSourcingExample.Application.CQRS.Banking.Commands.Withdraw;
 using EventSourcingExample.Application.CQRS.Banking.Queries.GetBalance;
 using EventSourcingExample.Application.CQRS.Users.Queries.GetUserSettings;
-using Microsoft.AspNetCore.Authorization;
+using MediatR;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using System;
-using System.Threading.Tasks;
 
-namespace EventSourcingExample.WebUI.Controllers
+namespace EventSourcingExample.WebUI.Controllers;
+
+public class BankingModule : CarterModule
 {
-    //TODO use carter?
-    [AllowAnonymous]
-    public class BankingController : ApiControllerBase
+    public BankingModule() : base("/banking")
     {
-		[HttpPost("open")]
-		[ProducesResponseType(StatusCodes.Status200OK)]
-		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public async Task<ActionResult<SettingsVM>> Open()
-		{
-			var command = new OpenAccountCommand();
-			var result = await Mediator.Send(command);
-            return Ok(result);
-		}
+    }
 
-		[HttpGet("balance/{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<UserDto>> GetBalance([FromRoute] Guid id)
+    public override void AddRoutes(IEndpointRouteBuilder app)
+    {
+        app.MapPost("/open", async (IMediator mediator) =>
+        {
+            var command = new OpenAccountCommand();
+            var result = await mediator.Send(command);
+            return Results.Ok(result);
+        })
+        .WithName("Open an account")
+        .AllowAnonymous()
+        .Produces<SettingsVM>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status404NotFound);
+
+        app.MapGet("/balance/{id:guid}", async (Guid id, IMediator mediator) =>
         {
             var query = new GetBalanceQuery(id);
-            var result = await Mediator.Send(query);
-            return Ok(result);
-        }
+            var result = await mediator.Send(query);
+            return Results.Ok(result);
+        })
+        .WithName("Check account balance")
+        .AllowAnonymous()
+        .Produces<UserDto>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status404NotFound);
 
-        [HttpPatch("close/{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<SettingsVM>> Close([FromRoute] Guid id)
+        app.MapPatch("/close/{id:guid}", async (Guid id, IMediator mediator) =>
         {
             var command = new CloseAccountCommand(id);
-            var result = await Mediator.Send(command);
-            return Ok(result);
-        }
+            var result = await mediator.Send(command);
+            return Results.Ok(result);
+        })
+        .WithName("Close an account")
+        .AllowAnonymous()
+        .Produces<SettingsVM>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status404NotFound);
 
-        [HttpPost("deposit")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesDefaultResponseType]
-        public async Task<ActionResult> Deposit([FromBody] DepositCommand command)
+        app.MapPost("/deposit", async (DepositCommand command, IMediator mediator) =>
         {
-            await Mediator.Send(command);
-            return Ok();
-        }
+            await mediator.Send(command);
+            return Results.Ok();
+        })
+        .WithName("Deposit money")
+        .AllowAnonymous()
+        .Produces(StatusCodes.Status200OK);
 
-		[HttpPost("withdraw")]
-		[ProducesResponseType(StatusCodes.Status200OK)]
-		[ProducesDefaultResponseType]
-		public async Task<ActionResult> Withdraw([FromBody] WithdrawCommand command)
-		{
-			await Mediator.Send(command);
-			return Ok();
-		}
+        app.MapPost("/withdraw", async (WithdrawCommand command, IMediator mediator) =>
+        {
+            await mediator.Send(command);
+            return Results.Ok();
+        })
+        .WithName("Withdraw money")
+        .AllowAnonymous()
+        .Produces(StatusCodes.Status200OK);
     }
 }
