@@ -16,7 +16,7 @@ namespace EventSourcingExample.WebUI.Controllers;
 
 public class BankingModule : CarterModule
 {
-    public BankingModule() : base("/banking")
+    public BankingModule() : base("/api/banking")
     {
     }
 

@@ -20,7 +20,6 @@ public class BankAccount : IEventSourceEntity
 			throw new InvalidOperationException("Account is already opened");
 
 		Id = Guid.NewGuid();
-		IsOpened = true;
         AddEvent(new AccountOpened(Id)); // For event sourcing
     }
 
@@ -28,7 +27,6 @@ public class BankAccount : IEventSourceEntity
     {
         if(!IsOpened)
 			throw new InvalidOperationException("Account is already closed");
-		IsOpened = false;
         AddEvent(new AccountClosed()); // For event sourcing
     }
 
@@ -40,7 +38,6 @@ public class BankAccount : IEventSourceEntity
 		if (amount <= 0)
             throw new InvalidOperationException("Amount must be positive");
 
-        Balance += amount;
         AddEvent(new AccountDeposited(Id, amount)); // For event sourcing
     }
 
@@ -55,7 +52,6 @@ public class BankAccount : IEventSourceEntity
         if (Balance < amount)
             throw new InvalidOperationException("Insufficient funds");
 
-        Balance -= amount;
         AddEvent(new AccountWithdrawn(Id, amount)); // For event sourcing
     }
 
