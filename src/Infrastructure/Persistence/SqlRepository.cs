@@ -1,5 +1,6 @@
 ﻿using EventSourcingExample.Application.Abstraction;
 using EventSourcingExample.Domain.Common;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,14 +13,14 @@ namespace EventSourcingExample.Infrastructure.Persistence
             => await context.Set<T>().FindAsync(id);
 
 		public async Task AddAsync(T entity)
-        {
+		{
 			await context.Set<T>().AddAsync(entity);
 
 			foreach (var resolvedEvent in entity.GetUncommittedChanges())
             {
                 entity.ApplyEvent(resolvedEvent);
             }
-        }
+		}
 
 		public void AddAggregateToSave(T eventSourceEntity)
 		{
