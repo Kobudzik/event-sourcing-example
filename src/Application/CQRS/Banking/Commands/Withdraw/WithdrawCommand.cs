@@ -5,6 +5,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using EventSourcingExample.Application.Abstraction.Persistence;
+using EventSourcingExample.Infrastructure.Persistence;
 
 namespace EventSourcingExample.Application.CQRS.Banking.Commands.Withdraw
 {
@@ -13,7 +14,9 @@ namespace EventSourcingExample.Application.CQRS.Banking.Commands.Withdraw
 		public Guid Identifier { get; } = identifier;
 		public decimal Amount { get; } = amount;
 
-		internal sealed class WithdrawCommandHandler(IRepository<BankAccount> bankRepository) : IRequestHandler<WithdrawCommand>
+		internal sealed class WithdrawCommandHandler(
+            IRepository<BankAccount> bankRepository,
+            IEventStoreChangeTracker<BankAccount> eventStoreChangeTracker) : IRequestHandler<WithdrawCommand>
         {
 			public async Task<Unit> Handle(WithdrawCommand request, CancellationToken cancellationToken)
             {
@@ -23,7 +26,7 @@ namespace EventSourcingExample.Application.CQRS.Banking.Commands.Withdraw
 
                 entity.Withdraw(request.Amount);
 
-				bankRepository.AddAggregateToSave(entity);
+				eventStoreChangeTracker.AddAggregateToSave(entity);
 
 				return Unit.Value;
             }

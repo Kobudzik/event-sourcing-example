@@ -5,6 +5,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using EventSourcingExample.Application.Abstraction.Persistence;
+using EventSourcingExample.Infrastructure.Persistence;
 
 namespace EventSourcingExample.Application.CQRS.Banking.Commands.Deposit
 {
@@ -13,19 +14,19 @@ namespace EventSourcingExample.Application.CQRS.Banking.Commands.Deposit
 		public Guid Identifier { get; } = identifier;
 		public decimal Amount { get; } = amount;
 
-		internal sealed class DepositCommandHandler(IRepository<BankAccount> bankRepository) : IRequestHandler<DepositCommand>
+		internal sealed class DepositCommandHandler(
+            IRepository<BankAccount> bankRepository,
+            IEventStoreChangeTracker<BankAccount> eventStoreChangeTracker) : IRequestHandler<DepositCommand>
         {
-            private readonly IRepository<BankAccount> _bankRepository = bankRepository;
-
 			public async Task<Unit> Handle(DepositCommand request, CancellationToken cancellationToken)
             {
-                var entity = await _bankRepository.GetByIdAsync(request.Identifier);
+                var entity = await bankRepository.GetByIdAsync(request.Identifier);
                 if (entity == null)
                     throw new NotFoundException(nameof(BankAccount), request.Identifier);
 
                 entity.Deposit(request.Amount);
 
-				bankRepository.AddAggregateToSave(entity);
+                eventStoreChangeTracker.AddAggregateToSave(entity);
 
 				return Unit.Value;
             }

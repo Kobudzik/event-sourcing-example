@@ -77,7 +77,7 @@ namespace EventSourcingExample.Infrastructure.Persistence
 
                 var latestVersion = Database
                     .SqlQueryRaw<int>($@"
-                        SELECT TOP(1) {nameof(versionable.Version)} 
+                        SELECT TOP(1) {nameof(versionable.Version)}
                         FROM {type.Name}s
                         WHERE {nameof(versionable.Identifier)} = '{versionable.Identifier}'
                         ORDER BY {nameof(versionable.Version)} DESC

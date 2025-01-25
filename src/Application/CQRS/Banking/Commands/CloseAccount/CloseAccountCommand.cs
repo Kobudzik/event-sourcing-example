@@ -1,6 +1,7 @@
 ﻿using EventSourcingExample.Application.Abstraction.Persistence;
 using EventSourcingExample.Application.Common.Exceptions;
 using EventSourcingExample.Domain.Entities.Banking;
+using EventSourcingExample.Infrastructure.Persistence;
 using MediatR;
 using System;
 using System.Threading;
@@ -12,7 +13,9 @@ namespace EventSourcingExample.Application.CQRS.Banking.Commands.CloseAccount
 	{
 		public Guid Identifier { get; set; } = identifier;
 
-		internal sealed class CloseAccountCommandHandler(IRepository<BankAccount> bankRepository) : IRequestHandler<CloseAccountCommand>
+		internal sealed class CloseAccountCommandHandler(
+            IRepository<BankAccount> bankRepository,
+            IEventStoreChangeTracker<BankAccount> eventStoreChangeTracker) : IRequestHandler<CloseAccountCommand>
 		{
 			public async Task<Unit> Handle(CloseAccountCommand request, CancellationToken cancellationToken)
 			{
@@ -21,7 +24,7 @@ namespace EventSourcingExample.Application.CQRS.Banking.Commands.CloseAccount
 					throw new NotFoundException(nameof(BankAccount), request.Identifier);
 
 				account.Close();
-				bankRepository.AddAggregateToSave(account);
+                eventStoreChangeTracker.AddAggregateToSave(account);
 				return Unit.Value;
 			}
 		}

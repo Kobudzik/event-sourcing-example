@@ -1,6 +1,5 @@
 ﻿using EventSourcingExample.Domain.Common;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace EventSourcingExample.Application.Abstraction.Persistence
@@ -9,7 +8,5 @@ namespace EventSourcingExample.Application.Abstraction.Persistence
     {
         Task<T> GetByIdAsync(Guid id);
         Task AddAsync(T entity);
-        void AddAggregateToSave(T eventSourceEntity);
-        Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

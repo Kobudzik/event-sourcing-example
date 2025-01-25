@@ -60,6 +60,7 @@ namespace EventSourcingExample.Infrastructure
             {
                 services.AddScoped<IRepository<BankAccount>, EventStoreRepository<BankAccount>>();
                 services.AddTransient(typeof(IEventSourcingUnitOfWork), typeof(EventSourcingUnitOfWork<BankAccount>));
+                services.AddTransient(typeof(IEventStoreChangeTracker<BankAccount>), typeof(EventStoreChangeTracker<BankAccount>));
 
                 services.AddSingleton(_ =>
 				{

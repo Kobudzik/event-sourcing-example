@@ -1,7 +1,6 @@
 ﻿using EventSourcingExample.Application.Abstraction.Persistence;
 using EventSourcingExample.Domain.Common;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace EventSourcingExample.Infrastructure.Persistence
@@ -20,16 +19,6 @@ namespace EventSourcingExample.Infrastructure.Persistence
             {
                 entity.ApplyEvent(resolvedEvent);
             }
-		}
-
-		public void AddAggregateToSave(T eventSourceEntity)
-		{
-			//do nothing
-		}
-
-		public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
-		{
-			return await context.SaveChangesAsync(cancellationToken);
 		}
 	}
 }

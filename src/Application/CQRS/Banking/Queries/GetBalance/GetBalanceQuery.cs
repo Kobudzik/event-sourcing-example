@@ -14,7 +14,9 @@ namespace EventSourcingExample.Application.CQRS.Banking.Queries.GetBalance
 	{
 		public Guid Identifier { get; } = identifier;
 
-		internal sealed class GetBalanceCommandHandler(IRepository<BankAccount> bankRepository, IMapper mapper) : IRequestHandler<GetBalanceQuery, BankAccountDto>
+		internal sealed class GetBalanceCommandHandler(
+            IRepository<BankAccount> bankRepository,
+            IMapper mapper) : IRequestHandler<GetBalanceQuery, BankAccountDto>
 		{
 			public async Task<BankAccountDto> Handle(GetBalanceQuery request, CancellationToken cancellationToken)
 			{

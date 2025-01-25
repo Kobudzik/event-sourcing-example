@@ -11,14 +11,12 @@ namespace EventSourcingExample.Application.CQRS.Banking.Commands.OpenAccount
 	{
 		internal sealed class OpenAccountCommandHandler(IRepository<BankAccount> bankRepository) : IRequestHandler<OpenAccountCommand, Guid>
 		{
-			private readonly IRepository<BankAccount> _bankRepository = bankRepository;
-
 			public async Task<Guid> Handle(OpenAccountCommand request, CancellationToken cancellationToken)
 			{
 				var account = new BankAccount();
 				account.Open();
 
-				bankRepository.AddAggregateToSave(account);
+                await bankRepository.AddAsync(account);
 				return account.Id;
 			}
 		}
