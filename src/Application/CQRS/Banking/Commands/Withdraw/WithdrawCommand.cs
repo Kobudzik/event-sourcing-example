@@ -23,8 +23,9 @@ namespace EventSourcingExample.Application.CQRS.Banking.Commands.Withdraw
 
                 entity.Withdraw(request.Amount);
 
-                await bankRepository.SaveAsync(entity);
-                return Unit.Value;
+				bankRepository.AddAggregateToSave(entity);
+
+				return Unit.Value;
             }
         }
     }

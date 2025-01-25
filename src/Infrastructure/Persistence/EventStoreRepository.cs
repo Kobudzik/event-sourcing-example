@@ -1,16 +1,21 @@
 ﻿using EventSourcingExample.Application.Abstraction;
 using EventSourcingExample.Domain.Common;
+using EventSourcingExample.Domain.Events;
 using EventStore.Client;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EventSourcingExample.Infrastructure.Persistence
 {
 	public class EventStoreRepository<T>(EventStoreClient eventStoreConnection) : IRepository<T> where T : IEventSourceEntity, new()
 	{
+		private readonly List<T> _aggregatesToSave = [];
+
 		public async Task<T?> GetByIdAsync(Guid id)
 		{
 			try
@@ -22,7 +27,7 @@ namespace EventSourcingExample.Infrastructure.Persistence
 				{
 					var eventJson = Encoding.UTF8.GetString(resolvedEvent.Event.Data.ToArray());
 					var eventType = resolvedEvent.Event.EventType;
-					var @event = entity.DeserializeEvent(eventJson, eventType);
+					var @event = entity.DeserializeEvent(eventJson, eventType) as IDomainEvent;
 					entity.ApplyEvent(@event);
 				}
 
@@ -34,14 +39,29 @@ namespace EventSourcingExample.Infrastructure.Persistence
 			}
 		}
 
-		public async Task SaveAsync(T entity)
+		public async Task AddAsync(T entity)
 		{
 			var events = entity.GetUncommittedChanges();
 			var eventDataList = events.Select(ParseToEventData).ToArray();
 			await eventStoreConnection.AppendToStreamAsync($"{typeof(T).Name}-{entity.Id}", StreamState.Any, eventDataList);
 		}
 
-		private static EventData ParseToEventData(object e)
+		public void AddAggregateToSave(T eventSourceEntity)
+		{
+			_aggregatesToSave.Add(eventSourceEntity);
+		}
+
+		public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
+		{
+			foreach(var entity in _aggregatesToSave)
+			{
+				await AddAsync(entity);
+			}
+
+			return _aggregatesToSave.Sum(x => x.GetUncommittedChanges().Count);
+		}
+
+		private static EventData ParseToEventData(IDomainEvent e)
 		{
 			var eventType = e.GetType().Name;
 			var eventJson = JsonConvert.SerializeObject(e);

@@ -38,8 +38,9 @@ namespace EventSourcingExample.Infrastructure
             }
 
             services.AddScoped<IApplicationDbContext>(provider => provider.GetService<ApplicationDbContext>());
+            services.AddScoped<DbContext>(provider => provider.GetService<ApplicationDbContext>());
 
-            services.AddScoped<IDomainEventService, DomainEventService>();
+			services.AddScoped<IDomainEventService, DomainEventService>();
 
             services.AddTransient<IDateTime, DateTimeService>();
 

@@ -25,8 +25,9 @@ namespace EventSourcingExample.Application.CQRS.Banking.Commands.Deposit
 
                 entity.Deposit(request.Amount);
 
-                await _bankRepository.SaveAsync(entity);
-                return Unit.Value;
+				bankRepository.AddAggregateToSave(entity);
+
+				return Unit.Value;
             }
         }
     }

@@ -3,6 +3,7 @@ using EventSourcingExample.Domain.Common;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using EventSourcingExample.Domain.Events;
 
 namespace EventSourcingExample.Domain.Entities.Banking;
 
@@ -12,7 +13,7 @@ public class BankAccount : IEventSourceEntity
     public decimal Balance { get; private set; } = 0;
 	public bool IsOpened { get; private set; }
 
-	private readonly List<object> _eventSourceChanges = [];
+	private readonly List<IDomainEvent> _eventSourceChanges = [];
 
 	public void Open()
     {
@@ -56,7 +57,7 @@ public class BankAccount : IEventSourceEntity
     }
 
 	// Method to apply an event (for event sourcing)
-	public void ApplyEvent(object eventItem)
+	public void ApplyEvent(IDomainEvent eventItem)
     {
         switch (eventItem)
         {
@@ -80,13 +81,13 @@ public class BankAccount : IEventSourceEntity
     }
 
     // Method to get all uncommitted changes (for event sourcing)
-    public List<object> GetUncommittedChanges()
+    public List<IDomainEvent> GetUncommittedChanges()
     {
         return _eventSourceChanges;
     }
 
     // Add an event to the list (for event sourcing)
-    private void AddEvent(object eventItem)
+    private void AddEvent(IDomainEvent eventItem)
     {
         _eventSourceChanges.Add(eventItem);
     }

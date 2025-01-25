@@ -21,7 +21,7 @@ namespace EventSourcingExample.Application.CQRS.Banking.Commands.CloseAccount
 					throw new NotFoundException(nameof(BankAccount), request.Identifier);
 
 				account.Close();
-				await bankRepository.SaveAsync(account);
+				bankRepository.AddAggregateToSave(account);
 				return Unit.Value;
 			}
 		}

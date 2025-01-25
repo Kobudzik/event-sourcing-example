@@ -32,7 +32,7 @@ namespace EventSourcingExample.WebUI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddEmailsModule();
-            services.AddApplication();
+            services.AddApplication(configuration);
             services.AddInfrastructure(Configuration);
             services.AddCors();
 

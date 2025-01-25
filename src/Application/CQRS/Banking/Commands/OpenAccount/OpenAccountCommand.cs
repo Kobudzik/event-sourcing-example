@@ -18,7 +18,7 @@ namespace EventSourcingExample.Application.CQRS.Banking.Commands.OpenAccount
 				var account = new BankAccount();
 				account.Open();
 
-				await _bankRepository.SaveAsync(account);
+				bankRepository.AddAggregateToSave(account);
 				return account.Id;
 			}
 		}
