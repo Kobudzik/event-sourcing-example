@@ -1,4 +1,4 @@
-﻿using EventSourcingExample.Application.Abstraction;
+﻿using EventSourcingExample.Application.Abstraction.Persistence;
 using EventSourcingExample.Domain.Entities.Banking;
 using MediatR;
 using System;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EventSourcingExample.Application.CQRS.Banking.Commands.OpenAccount
 {
-	public sealed class OpenAccountCommand : IRequest<Guid>
+    public sealed class OpenAccountCommand : IRequest<Guid>
 	{
 		internal sealed class OpenAccountCommandHandler(IRepository<BankAccount> bankRepository) : IRequestHandler<OpenAccountCommand, Guid>
 		{

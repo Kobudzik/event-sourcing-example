@@ -1,4 +1,4 @@
-﻿using EventSourcingExample.Application.Abstraction;
+﻿using EventSourcingExample.Application.Abstraction.Persistence;
 using EventSourcingExample.Domain.Common;
 using EventSourcingExample.Domain.Events;
 using EventStore.Client;
@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace EventSourcingExample.Infrastructure.Persistence
 {
-	public class EventStoreRepository<T>(EventStoreClient eventStoreConnection) : IRepository<T> where T : IEventSourceEntity, new()
+    public class EventStoreRepository<T>(EventStoreClient eventStoreConnection) : IRepository<T> where T : IEventSourceEntity, new()
 	{
 		private readonly List<T> _aggregatesToSave = [];
 

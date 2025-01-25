@@ -1,5 +1,6 @@
 ﻿using EventSourcingExample.Application.Abstraction;
 using EventSourcingExample.Application.Abstraction.Configurations;
+using EventSourcingExample.Application.Abstraction.Persistence;
 using EventSourcingExample.Domain.Entities.Banking;
 using EventSourcingExample.Infrastructure.Common;
 using EventSourcingExample.Infrastructure.Configuration;
@@ -38,7 +39,6 @@ namespace EventSourcingExample.Infrastructure
             }
 
             services.AddScoped<IApplicationDbContext>(provider => provider.GetService<ApplicationDbContext>());
-            services.AddScoped<DbContext>(provider => provider.GetService<ApplicationDbContext>());
 
 			services.AddScoped<IDomainEventService, DomainEventService>();
 
@@ -52,12 +52,16 @@ namespace EventSourcingExample.Infrastructure
 
             services.AddSingleton<IApplicationConfiguration, ApplicationConfiguration>();
 
+            services.AddTransient(typeof(ISqlUnitOfWork), typeof(SqlUnitOfWork));
+
+            services.AddTransient(typeof(IUnitOfWork), typeof(CompositeUnitOfWork));
 
             if (configuration.GetValue<bool>("UseBankingEventStore"))
             {
                 services.AddScoped<IRepository<BankAccount>, EventStoreRepository<BankAccount>>();
+                services.AddTransient(typeof(IEventSourcingUnitOfWork), typeof(EventSourcingUnitOfWork<BankAccount>));
 
-				services.AddSingleton(_ =>
+                services.AddSingleton(_ =>
 				{
 					var settings = EventStoreClientSettings.Create("esdb://admin:changeit@localhost:2113?tls=false&tlsVerifyCert=false");
 					return new EventStoreClient(settings);
@@ -67,6 +71,7 @@ namespace EventSourcingExample.Infrastructure
             {
                 services.AddScoped<IRepository<BankAccount>, SqlRepository<BankAccount>>();
             }
+
             return services;
         }
     }

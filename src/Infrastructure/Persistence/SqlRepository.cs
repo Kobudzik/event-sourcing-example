@@ -1,13 +1,13 @@
-﻿using EventSourcingExample.Application.Abstraction;
+﻿using EventSourcingExample.Application.Abstraction.Persistence;
 using EventSourcingExample.Domain.Common;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace EventSourcingExample.Infrastructure.Persistence
 {
-    public class SqlRepository<T>(ApplicationDbContext context) : IRepository<T> where T : class, IEventSourceEntity, new()
+    public class SqlRepository<T>(ApplicationDbContext context) : IRepository<T>
+		where T : class, IEventSourceEntity, new()
     {
 		public async Task<T> GetByIdAsync(Guid id)
             => await context.Set<T>().FindAsync(id);

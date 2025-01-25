@@ -1,9 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using EventSourcingExample.Application.Abstraction.Persistence;
 
 namespace EventSourcingExample.Application.Abstraction
 {
-	public class CompositeUnitOfWork(IEventSourcingUnitOfWork eventSourcingUnitOfWork, ISqlUnitOfWork sqlUnitOfWork) : IUnitOfWork
+    public class CompositeUnitOfWork(IEventSourcingUnitOfWork eventSourcingUnitOfWork, ISqlUnitOfWork sqlUnitOfWork) : IUnitOfWork
 	{
 		public async Task<int> CommitAsync(CancellationToken cancellationToken)
 		{

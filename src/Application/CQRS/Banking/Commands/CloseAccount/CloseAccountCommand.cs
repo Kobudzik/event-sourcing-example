@@ -1,4 +1,4 @@
-﻿using EventSourcingExample.Application.Abstraction;
+﻿using EventSourcingExample.Application.Abstraction.Persistence;
 using EventSourcingExample.Application.Common.Exceptions;
 using EventSourcingExample.Domain.Entities.Banking;
 using MediatR;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace EventSourcingExample.Application.CQRS.Banking.Commands.CloseAccount
 {
-	public sealed class CloseAccountCommand(Guid identifier) : IRequest
+    public sealed class CloseAccountCommand(Guid identifier) : IRequest
 	{
 		public Guid Identifier { get; set; } = identifier;
 

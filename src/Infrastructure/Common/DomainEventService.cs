@@ -2,9 +2,9 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
-using EventSourcingExample.Application.Abstraction;
 using EventSourcingExample.Application.Common.Models;
 using EventSourcingExample.Domain.Common;
+using EventSourcingExample.Application.Abstraction.Persistence;
 
 namespace EventSourcingExample.Infrastructure.Common
 {

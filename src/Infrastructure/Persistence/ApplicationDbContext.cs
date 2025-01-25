@@ -13,6 +13,7 @@ using Duende.IdentityServer.EntityFramework.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
 using EventSourcingExample.Domain.Entities.Banking;
+using EventSourcingExample.Application.Abstraction.Persistence;
 
 namespace EventSourcingExample.Infrastructure.Persistence
 {

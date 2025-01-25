@@ -1,10 +1,10 @@
-﻿using EventSourcingExample.Application.Abstraction;
-using EventSourcingExample.Domain.Entities.Banking;
+﻿using EventSourcingExample.Domain.Entities.Banking;
 using EventSourcingExample.Application.Common.Exceptions;
 using MediatR;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using EventSourcingExample.Application.Abstraction.Persistence;
 
 namespace EventSourcingExample.Application.CQRS.Banking.Commands.Withdraw
 {

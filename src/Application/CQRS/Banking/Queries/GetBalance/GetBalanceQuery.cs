@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using EventSourcingExample.Application.Abstraction;
 using EventSourcingExample.Domain.Entities.Banking;
 using EventSourcingExample.Application.CQRS.Authentication.DTOs;
 using MediatR;
@@ -7,10 +6,11 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using EventSourcingExample.Application.Common.Exceptions;
+using EventSourcingExample.Application.Abstraction.Persistence;
 
 namespace EventSourcingExample.Application.CQRS.Banking.Queries.GetBalance
 {
-	public sealed class GetBalanceQuery(Guid identifier) : IRequest<BankAccountDto>
+    public sealed class GetBalanceQuery(Guid identifier) : IRequest<BankAccountDto>
 	{
 		public Guid Identifier { get; } = identifier;
 

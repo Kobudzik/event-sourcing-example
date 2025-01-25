@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using EventSourcingExample.Application.Abstraction;
+using EventSourcingExample.Application.Abstraction.Persistence;
 using EventSourcingExample.Domain.Entities.Core;
 using Microsoft.EntityFrameworkCore;
 

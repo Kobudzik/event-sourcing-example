@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using EventSourcingExample.Domain.Common;
 
-namespace EventSourcingExample.Application.Abstraction
+namespace EventSourcingExample.Application.Abstraction.Persistence
 {
     public interface IDomainEventService
     {

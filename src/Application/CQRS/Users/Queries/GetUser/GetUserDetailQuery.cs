@@ -2,9 +2,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using EventSourcingExample.Application.Abstraction;
 using EventSourcingExample.Application.Abstraction.User;
 using EventSourcingExample.Application.CQRS.Authentication.DTOs;
+using EventSourcingExample.Application.Abstraction.Persistence;
 
 namespace EventSourcingExample.Application.CQRS.Users.Queries.GetUser
 {
